@@ -38,7 +38,7 @@ export function Button(
 ) {
   const { variant = 'primary', size = 'md', className, children } = props
 
-  if ('href' in props && props.href) {
+  if ('href' in props) {
     return (
       <Link href={props.href} className={cn(classes(variant, size), className)}>
         {children}
