@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getAllCards, getCard, getAdjacentSlugs } from "@/lib/cards";
 import FavoriteButton from "@/components/FavoriteButton";
 import { notFound } from "next/navigation";
+import ShareButton from "@/components/ShareButton";
+
 
 export function generateStaticParams() {
   return getAllCards().map((c) => ({ slug: c.slug }));
