@@ -45,18 +45,15 @@ const base =
 const sizeClasses: Record<Size, string> = {
   sm: 'h-9 px-3 text-sm',
   md: 'h-11 px-4 text-sm',
-  lg: 'h-12 px-5 text-base', // good mobile tap size
+  lg: 'h-12 px-5 text-base',
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary:
-    'bg-black text-white hover:bg-black/90 shadow-sm border border-black/10',
+  primary: 'bg-black text-white hover:bg-black/90 shadow-sm border border-black/10',
   secondary:
     'bg-white text-black hover:bg-black/[0.03] border border-black/15 shadow-sm',
-  ghost:
-    'bg-transparent text-black hover:bg-black/[0.05] border border-transparent',
-  soft:
-    'bg-black/[0.06] text-black hover:bg-black/[0.10] border border-black/10',
+  ghost: 'bg-transparent text-black hover:bg-black/[0.05] border border-transparent',
+  soft: 'bg-black/[0.06] text-black hover:bg-black/[0.10] border border-black/10',
 }
 
 export function Button(props: ButtonProps) {
@@ -71,11 +68,18 @@ export function Button(props: ButtonProps) {
 
   const classes = cn(base, sizeClasses[size], variantClasses[variant], className)
 
-  // ✅ Clean, type-safe narrowing: link branch
+  // ✅ Clean narrowing: anchor branch
   if ('href' in props) {
-    const { href, target, rel } = props
+    // Cast is safe because this branch only runs when href exists
+    const linkProps = props as AnchorProps
+
     return (
-      <Link href={href} className={classes} target={target} rel={rel}>
+      <Link
+        href={linkProps.href}
+        className={classes}
+        target={linkProps.target}
+        rel={linkProps.rel}
+      >
         {leftIcon ? <span className="shrink-0">{leftIcon}</span> : null}
         <span>{children}</span>
         {rightIcon ? <span className="shrink-0">{rightIcon}</span> : null}
@@ -83,13 +87,14 @@ export function Button(props: ButtonProps) {
     )
   }
 
-  // ✅ Button branch: type is valid here
-  const { onClick, disabled } = props
+  // ✅ Button branch
+  const btnProps = props as BtnProps
+
   return (
     <button
-      type={props.type ?? 'button'}
-      onClick={onClick}
-      disabled={disabled}
+      type={btnProps.type ?? 'button'}
+      onClick={btnProps.onClick}
+      disabled={btnProps.disabled}
       className={classes}
     >
       {leftIcon ? <span className="shrink-0">{leftIcon}</span> : null}
