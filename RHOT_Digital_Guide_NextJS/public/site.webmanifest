@@ -1,9 +1,0 @@
-{
-  "name": "RHOT Digital Guide",
-  "short_name": "RHOT Guide",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#fbfaf8",
-  "theme_color": "#fbfaf8",
-  "icons": []
-}
