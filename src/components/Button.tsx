@@ -1,58 +1,54 @@
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import Link from "next/link";
 
 type CommonProps = {
-  variant?: 'primary' | 'ghost' | 'soft'
-  size?: 'sm' | 'md' | 'lg'
-  className?: string
-  children: React.ReactNode
-}
+  className?: string;
+  children: React.ReactNode;
+  variant?: "primary" | "secondary" | "ghost";
+  size?: "sm" | "md" | "lg";
+};
 
-function classes(variant: CommonProps['variant'], size: CommonProps['size']) {
-  const v =
-    variant === 'ghost'
-      ? 'bg-transparent hover:bg-black/5'
-      : variant === 'soft'
-        ? 'bg-black/5 hover:bg-black/10'
-        : 'bg-black text-white hover:bg-black/90'
+type AnchorProps = CommonProps & {
+  href: string;
+  onClick?: never;
+  type?: never;
+  target?: string;
+  rel?: string;
+};
 
-  const s =
-    size === 'sm'
-      ? 'h-9 px-3 text-sm'
-      : size === 'lg'
-        ? 'h-12 px-5 text-base'
-        : 'h-10 px-4 text-sm'
+type ButtonProps = CommonProps & {
+  href?: never;
+  onClick?: () => void;
+  type?: "button" | "submit";
+  disabled?: boolean;
+};
 
-  return cn(
-    'inline-flex items-center justify-center gap-2 rounded-xl2 border border-black/10 transition',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-    v,
-    s,
-  )
-}
+export function Button(props: AnchorProps | ButtonProps) {
+  const { className, children } = props;
 
-export function Button(
-  props:
-    | (CommonProps & { href: string; onClick?: never })
-    | (CommonProps & { href?: never; onClick?: () => void; type?: 'button' | 'submit' }),
-) {
-  const { variant = 'primary', size = 'md', className, children } = props
-
-  if ('href' in props) {
+  // ✅ clean narrowing: anchor branch
+  if ("href" in props) {
     return (
-      <Link href={props.href} className={cn(classes(variant, size), className)}>
+      <Link
+        href={props.href}
+        className={className}
+        target={props.target}
+        rel={props.rel}
+      >
         {children}
       </Link>
-    )
+    );
   }
 
+  // ✅ button branch: type is valid here
   return (
     <button
-      type={props.type ?? 'button'}
+      type={props.type ?? "button"}
       onClick={props.onClick}
-      className={cn(classes(variant, size), className)}
+      className={className}
+      disabled={props.disabled}
     >
       {children}
     </button>
-  )
+  );
 }
+
