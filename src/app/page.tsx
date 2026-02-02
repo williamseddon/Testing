@@ -44,7 +44,7 @@ export default function HomePage() {
                 <Shuffle className="h-4 w-4" />
                 Start a Reading
               </Button>
-              <Button href="/deck" size="lg" variant="soft">
+              <Button href="/deck" size="lg" variant="secondary">
                 <Layers className="h-4 w-4" />
                 Browse the Deck
               </Button>
