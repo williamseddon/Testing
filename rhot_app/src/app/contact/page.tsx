@@ -10,9 +10,11 @@ export const metadata = {
 }
 
 export default function ContactPage() {
-  const instagramHandle = site.contact.instagram.startsWith('@')
-    ? site.contact.instagram.slice(1)
-    : site.contact.instagram
+  // site.contact.social is expected to be something like "@rhotarot"
+  const socialHandleRaw = site.contact.social ?? '@rhotarot'
+  const instagramHandle = socialHandleRaw.startsWith('@')
+    ? socialHandleRaw.slice(1)
+    : socialHandleRaw
 
   const instagramUrl = `https://instagram.com/${instagramHandle}`
 
@@ -30,12 +32,11 @@ export default function ContactPage() {
           </h1>
 
           <p className="mt-4 text-lg text-black/65">
-            Have a question about your deck, a card you pulled, or an order? Reach out
-            &mdash; we&apos;ll point you in the right direction.
+            Have a question about your deck, a card you pulled, or an order? Reach
+            out &mdash; we&apos;ll point you in the right direction.
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {/* ✅ Button renders a Link branch when href is provided */}
             <Button href={`mailto:${site.contact.email}`} className="justify-center">
               <Mail className="h-4 w-4" />
               Email us
@@ -59,7 +60,7 @@ export default function ContactPage() {
               className="justify-center"
             >
               <Instagram className="h-4 w-4" />
-              {site.contact.instagram}
+              @{instagramHandle}
             </Button>
 
             <Button
@@ -107,15 +108,15 @@ export default function ContactPage() {
                   rel="noreferrer"
                   className="underline decoration-black/20 underline-offset-4 hover:decoration-black/40"
                 >
-                  {site.contact.instagram}
+                  @{instagramHandle}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div className="mt-8 rounded-2xl border border-black/10 bg-white/50 p-5 text-xs text-black/55">
-            DISCLAIMER: This product is not endorsed by, affiliated with, or
-            commercially connected to anyone other than Twins who Tarot LLC.
+            DISCLAIMER: This product is not endorsed by, affiliated with, or commercially
+            connected to anyone other than Twins who Tarot LLC.
           </div>
 
           <div className="mt-6 text-sm text-black/60">
@@ -133,5 +134,6 @@ export default function ContactPage() {
     </div>
   )
 }
+
 
 
