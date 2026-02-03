@@ -21,8 +21,9 @@ function parseCardsParam(param: string | undefined): string[] | null {
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean)
+
   if (!ids.length) return null
-  // validate
+
   for (const id of ids) {
     if (!cardsById.has(id)) return null
   }
@@ -42,6 +43,7 @@ function parseRevParam(param: string | undefined, count: number): boolean[] | nu
 function buildQuery(drawn: Drawn[], includeReversals: boolean) {
   const sp = new URLSearchParams()
   sp.set('cards', drawn.map((d) => d.id).join(','))
+
   if (includeReversals) {
     sp.set(
       'rev',
@@ -51,6 +53,7 @@ function buildQuery(drawn: Drawn[], includeReversals: boolean) {
     )
     sp.set('reversals', '1')
   }
+
   return `?${sp.toString()}`
 }
 
@@ -74,10 +77,20 @@ export function ReadingClient({
     initialReversals ?? false,
   )
   const [drawn, setDrawn] = useState<Drawn[] | null>(null)
-  const [revealed, setRevealed] = useState<boolean[]>(() =>
-    new Array(spread.cards).fill(false),
+  const [revealed, setRevealed] = useState<boolean[]>(
+    () => new Array(spread.cards).fill(false),
   )
   const [toast, setToast] = useState<string | null>(null)
+
+  // Keep revealed array length aligned to spread.cards if spread changes
+  useEffect(() => {
+    setRevealed((prev) => {
+      if (prev.length === spread.cards) return prev
+      const next = new Array(spread.cards).fill(false)
+      for (let i = 0; i < Math.min(prev.length, next.length); i++) next[i] = prev[i]
+      return next
+    })
+  }, [spread.cards])
 
   function showToast(msg: string) {
     setToast(msg)
@@ -99,15 +112,20 @@ export function ReadingClient({
   useEffect(() => {
     const ids = parseCardsParam(initialCardsParam)
     const rev = parseRevParam(initialRevParam, spread.cards)
+
+    // Use initialReversals to interpret URL reversals on first load (not the state which can change)
+    const useReversals = Boolean(initialReversals)
+
     if (ids && ids.length === spread.cards) {
       const d: Drawn[] = ids.map((id, i) => ({
         id,
-        reversed: includeReversals ? Boolean(rev?.[i]) : false,
+        reversed: useReversals ? Boolean(rev?.[i]) : false,
       }))
       setDrawn(d)
       setRevealed(new Array(spread.cards).fill(false))
       return
     }
+
     // If no valid params, auto-draw once
     newReading()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -144,15 +162,15 @@ export function ReadingClient({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
             <Badge>{spread.cards} cards</Badge>
-            {includeReversals ? <Badge>Reversals on</Badge> : <Badge>Reversals off</Badge>}
+            {includeReversals ? (
+              <Badge>Reversals on</Badge>
+            ) : (
+              <Badge>Reversals off</Badge>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button
-              variant="soft"
-              onClick={() => newReading()}
-              className="justify-center"
-            >
+            <Button variant="soft" onClick={() => newReading()} className="justify-center">
               <RefreshCw className="h-4 w-4" />
               Shuffle &amp; Draw
             </Button>
@@ -169,8 +187,8 @@ export function ReadingClient({
 
         <div className="mt-4 flex items-center justify-between gap-4 rounded-2xl border border-black/10 bg-white/50 p-4">
           <div className="text-sm text-black/70">
-            Tap each card to reveal. Your interpretation is the final authority —
-            the cards are just the girls talking.
+            Tap each card to reveal. Your interpretation is the final authority — the
+            cards are just the girls talking.
           </div>
 
           <label className="flex items-center gap-2 text-sm text-black/60">
@@ -180,9 +198,13 @@ export function ReadingClient({
               onChange={(e) => {
                 const v = e.target.checked
                 setIncludeReversals(v)
+
                 // If a reading exists, update URL to reflect new reversals state (keep cards)
                 if (drawn) {
-                  const updated = drawn.map((d) => ({ ...d, reversed: v ? d.reversed : false }))
+                  const updated = drawn.map((d) => ({
+                    ...d,
+                    reversed: v ? d.reversed : false,
+                  }))
                   setDrawn(updated)
                   router.replace(pathname + buildQuery(updated, v))
                 }
@@ -199,7 +221,7 @@ export function ReadingClient({
             gridTemplateRows: `repeat(${spread.layout.rows}, minmax(0, 1fr))`,
           }}
         >
-          {spread.layout.cells.map((cell, slotIndex) => {
+          {spread.layout.cells.map((cell) => {
             const pos = spread.positions.find((p) => p.key === cell.key)!
             const di = Number(cell.key) - 1
             const d = drawn?.[di]
@@ -281,7 +303,7 @@ export function ReadingClient({
                   </div>
 
                   {isRevealed && card ? (
-                    <div className="relative mt-4 flex items-center justify-between gap-2 rounded-xl2 border border-black/10 bg-white/60 p-3">
+                    <div className="relative mt-4 flex items-center justify-between gap-2 rounded-2xl border border-black/10 bg-white/60 p-3">
                       <div className="min-w-0">
                         <div className="truncate font-serif text-lg font-semibold">
                           {card.title}
@@ -292,7 +314,7 @@ export function ReadingClient({
                       </div>
                       <Link
                         href={`/card/${card.id}`}
-                        className="inline-flex shrink-0 items-center gap-2 rounded-xl2 border border-black/10 bg-white px-3 py-2 text-sm text-black/70 hover:bg-white/70"
+                        className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm text-black/70 hover:bg-white/70"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Sparkles className="h-4 w-4" />
@@ -349,9 +371,7 @@ export function ReadingClient({
                       {d?.reversed ? ' · Reversed' : ''}
                     </div>
                     {card.quote ? (
-                      <div className="mt-2 text-sm text-black/65">
-                        “{card.quote}”
-                      </div>
+                      <div className="mt-2 text-sm text-black/65">“{card.quote}”</div>
                     ) : null}
                   </div>
                 )}
