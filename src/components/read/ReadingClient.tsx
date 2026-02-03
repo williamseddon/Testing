@@ -259,7 +259,7 @@ export function ReadingClient({
                             fill
                             className={cn(
                               'object-cover transition duration-500 group-hover:scale-[1.02]',
-                              d.reversed ? 'rotate-180' : '',
+                              d?.reversed ? 'rotate-180' : '',
                             )}
                             sizes="(max-width: 1024px) 140px, 160px"
                           />
