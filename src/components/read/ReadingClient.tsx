@@ -346,7 +346,7 @@ export function ReadingClient({
                     </Link>
                     <div className="mt-1 text-sm text-black/60">
                       {card.character ?? ''}
-                      {d.reversed ? ' · Reversed' : ''}
+                      {d?.reversed ? ' · Reversed' : ''}
                     </div>
                     {card.quote ? (
                       <div className="mt-2 text-sm text-black/65">
