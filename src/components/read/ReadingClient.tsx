@@ -263,7 +263,7 @@ export function ReadingClient({
                             )}
                             sizes="(max-width: 1024px) 140px, 160px"
                           />
-                          {d.reversed ? (
+                          {d?.reversed ? (
                             <div className="absolute left-2 top-2 rounded-full bg-black/70 px-2 py-1 text-[10px] font-semibold text-white">
                               Reversed
                             </div>
