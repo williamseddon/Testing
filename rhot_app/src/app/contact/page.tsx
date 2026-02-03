@@ -1,81 +1,136 @@
 import Link from 'next/link'
+import { Container } from '@/components/Container'
 import { Badge } from '@/components/Badge'
 import { Button } from '@/components/Button'
-import { Container } from '@/components/Container'
 import { site } from '@/data/site'
+import { Instagram, Mail, Store } from 'lucide-react'
 
 export const metadata = {
   title: `Contact • ${site.productName}`,
 }
 
 export default function ContactPage() {
+  const instagramHandle = site.contact.instagram.startsWith('@')
+    ? site.contact.instagram.slice(1)
+    : site.contact.instagram
+
+  const instagramUrl = `https://instagram.com/${instagramHandle}`
+
   return (
-    <Container className="py-10">
-      <div className="mx-auto max-w-2xl">
-        <Badge className="bg-white/70">Contact</Badge>
-        <h1 className="mt-4 font-serif text-4xl font-semibold tracking-tight sm:text-5xl">
-          Say hello
-        </h1>
-
-        <p className="mt-4 text-lg text-black/65">
-          Questions, collaborations, press, or wholesale — we’d love to hear from you.
-        </p>
-
-        <div className="mt-6 rounded-2xl border border-black/10 bg-white/60 p-6">
-          <div className="grid gap-4 text-sm text-black/70">
-            <div>
-              <div className="text-xs font-medium uppercase tracking-wider text-black/45">
-                Email
-              </div>
-              <a className="mt-1 inline-block font-medium text-black hover:underline" href={`mailto:${site.contact.email}`}>
-                {site.contact.email}
-              </a>
-            </div>
-            <div>
-              <div className="text-xs font-medium uppercase tracking-wider text-black/45">
-                Instagram
-              </div>
-              <a
-                className="mt-1 inline-block font-medium text-black hover:underline"
-                href="https://instagram.com/rhotarot"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {site.contact.social}
-              </a>
-            </div>
-            <div>
-              <div className="text-xs font-medium uppercase tracking-wider text-black/45">
-                Contact form
-              </div>
-              <a
-                className="mt-1 inline-block font-medium text-black hover:underline"
-                href="https://rhotarot.com/contact"
-                target="_blank"
-                rel="noreferrer"
-              >
-                rhotarot.com/contact
-              </a>
-            </div>
+    <div>
+      <Container className="py-12">
+        <div className="mx-auto max-w-3xl">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge>Contact</Badge>
+            <Badge className="bg-white/70">{site.tagline}</Badge>
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button as="a" href={`mailto:${site.contact.email}`} className="justify-center">
+          <h1 className="mt-4 font-serif text-5xl font-semibold tracking-tight">
+            Let&apos;s stay connected
+          </h1>
+
+          <p className="mt-4 text-lg text-black/65">
+            Have a question about your deck, a card you pulled, or an order? Reach out
+            &mdash; we&apos;ll point you in the right direction.
+          </p>
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {/* ✅ Button renders a Link branch when href is provided */}
+            <Button href={`mailto:${site.contact.email}`} className="justify-center">
+              <Mail className="h-4 w-4" />
               Email us
             </Button>
-            <Button as="a" href="https://rhotarot.com/contact" target="_blank" rel="noreferrer" variant="soft">
-              Open contact page
+
+            <Button
+              href="https://rhotarot.com/contact"
+              target="_blank"
+              rel="noreferrer"
+              variant="soft"
+              className="justify-center"
+            >
+              Contact form
             </Button>
-            <Button as="link" href="/get-started" variant="ghost">
-              Get started
+
+            <Button
+              href={instagramUrl}
+              target="_blank"
+              rel="noreferrer"
+              variant="ghost"
+              className="justify-center"
+            >
+              <Instagram className="h-4 w-4" />
+              {site.contact.instagram}
+            </Button>
+
+            <Button
+              href="https://rhotarot.com/store"
+              target="_blank"
+              rel="noreferrer"
+              variant="ghost"
+              className="justify-center"
+            >
+              <Store className="h-4 w-4" />
+              Visit the store
             </Button>
           </div>
-        </div>
 
-        <div className="mt-10 text-sm text-black/55">
-          Looking for the store? <Link href="/store" className="font-medium text-black hover:underline">Go to the store page</Link>.
+          <div className="mt-10 rounded-2xl border border-black/10 bg-white/60 p-5 text-sm text-black/65">
+            <div className="font-medium text-black/80">Quick info</div>
+            <ul className="mt-3 space-y-2">
+              <li>
+                <span className="text-black/55">Website:</span>{' '}
+                <Link
+                  href={site.contact.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline decoration-black/20 underline-offset-4 hover:decoration-black/40"
+                >
+                  {site.contact.website.replace('https://', '')}
+                </Link>
+              </li>
+
+              <li>
+                <span className="text-black/55">Email:</span>{' '}
+                <Link
+                  href={`mailto:${site.contact.email}`}
+                  className="underline decoration-black/20 underline-offset-4 hover:decoration-black/40"
+                >
+                  {site.contact.email}
+                </Link>
+              </li>
+
+              <li>
+                <span className="text-black/55">Instagram:</span>{' '}
+                <Link
+                  href={instagramUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline decoration-black/20 underline-offset-4 hover:decoration-black/40"
+                >
+                  {site.contact.instagram}
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="mt-8 rounded-2xl border border-black/10 bg-white/50 p-5 text-xs text-black/55">
+            DISCLAIMER: This product is not endorsed by, affiliated with, or
+            commercially connected to anyone other than Twins who Tarot LLC.
+          </div>
+
+          <div className="mt-6 text-sm text-black/60">
+            Want a quick walkthrough?{' '}
+            <Link
+              href="/get-started"
+              className="underline decoration-black/20 underline-offset-4 hover:decoration-black/40"
+            >
+              Get started
+            </Link>
+            .
+          </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </div>
   )
 }
+
